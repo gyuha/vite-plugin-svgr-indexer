@@ -1,0 +1,42 @@
+{
+  "name": "vite-plugin-svgr-indexer",
+  "version": "0.1.0",
+  "description": "Vite plugin to automatically generate index.ts for SVG icons",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "svgr",
+    "svg",
+    "react",
+    "icons"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "vite": "^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0",
+    "vite-plugin-svgr": "^2.0.0 || ^3.0.0 || ^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.15",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-svgr": "^4.2.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "fast-glob": "^3.3.2"
+  }
+}
