@@ -2,19 +2,19 @@ import { Plugin } from 'vite';
 
 export interface SvgrIndexerOptions {
   /**
-   * SVG 아이콘이 위치한 디렉토리 경로 배열
+   * Array of directory paths where SVG icons are located
    * @default []
    */
   iconDirs: string[];
 
   /**
-   * 생성할 인덱스 파일 이름
+   * Name of the index file to generate
    * @default 'index.ts'
    */
   indexFileName?: string;
 
   /**
-   * 파일 변경 감시 활성화 여부
+   * Enable file change monitoring
    * @default true
    */
   watch?: boolean;

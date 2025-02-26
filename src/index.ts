@@ -6,14 +6,14 @@ import fg from "fast-glob";
 import { SvgrIndexerOptions, SvgrIndexerPlugin } from "./types";
 
 /**
- * SVG 파일명에서 컴포넌트 이름을 생성합니다.
- * 예: 'arrow-down.svg' -> 'ArrowDown'
+ * Creates a component name from an SVG filename.
+ * Example: 'arrow-down.svg' -> 'ArrowDown'
  */
 function getComponentName(fileName: string): string {
-  // 파일 확장자 제거
+  // Remove file extension
   const baseName = path.basename(fileName, ".svg");
 
-  // 파일명을 단어로 분리하고 각 단어의 첫 글자를 대문자로 변환
+  // Split the filename into words and capitalize the first letter of each word
   return baseName
     .split(/[-_\s]+/)
     .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -21,7 +21,7 @@ function getComponentName(fileName: string): string {
 }
 
 /**
- * 지정된 디렉토리에서 SVG 파일 목록을 가져옵니다.
+ * Gets a list of SVG files from the specified directory.
  */
 async function getSvgFiles(dir: string): Promise<string[]> {
   const pattern = path.join(dir, "**/*.svg");
@@ -29,7 +29,7 @@ async function getSvgFiles(dir: string): Promise<string[]> {
 }
 
 /**
- * index.ts 파일을 생성합니다.
+ * Generates the index.ts file.
  */
 async function generateIndexFile(
   iconDir: string,
@@ -41,28 +41,28 @@ async function generateIndexFile(
     return;
   }
 
-  // 상대 경로로 변환
+  // Convert to relative paths
   const relativePaths = svgFiles.map((file) => path.relative(iconDir, file));
 
-  // import 문 생성
+  // Generate import statements
   const imports = relativePaths.map((file) => {
     const componentName = getComponentName(path.basename(file));
-    // 경로에서 확장자를 제거하고 ?react 쿼리 추가
+    // Remove extension from path and add ?react query
     const importPath = "./" + file.replace(/\.svg$/, ".svg?react");
     return `import ${componentName} from '${importPath}';`;
   });
 
-  // export 문 생성
+  // Generate export statement
   const componentNames = relativePaths.map((file) =>
     getComponentName(path.basename(file))
   );
 
   const exportStatement = `export {\n  ${componentNames.join(",\n  ")}\n};`;
 
-  // 최종 파일 내용
+  // Final file content
   const fileContent = `${imports.join("\n")}\n\n${exportStatement}\n`;
 
-  // 파일 저장
+  // Save the file
   const indexFilePath = path.join(iconDir, indexFileName);
   fs.writeFileSync(indexFilePath, fileContent, "utf-8");
 
@@ -70,7 +70,7 @@ async function generateIndexFile(
 }
 
 /**
- * SVG 아이콘 인덱서 플러그인
+ * SVG Icon Indexer Plugin
  */
 export default function svgrIndexer(
   options: SvgrIndexerOptions
@@ -85,7 +85,7 @@ export default function svgrIndexer(
     name: "vite-plugin-svgr-indexer",
 
     async configResolved() {
-      // 각 아이콘 디렉토리에 대해 초기 인덱스 파일 생성
+      // Generate initial index files for each icon directory
       for (const dir of iconDirs) {
         if (!fs.existsSync(dir)) {
           fs.mkdirSync(dir, { recursive: true });
@@ -95,7 +95,7 @@ export default function svgrIndexer(
         await generateIndexFile(dir, indexFileName);
       }
 
-      // 파일 변경 감시 설정
+      // Set up file change monitoring
       if (watch) {
         for (const dir of iconDirs) {
           const watcher = chokidar.watch(path.join(dir, "**/*.svg"), {
@@ -122,5 +122,5 @@ export default function svgrIndexer(
   return plugin;
 }
 
-// 타입 내보내기
+// Export types
 export * from "./types";

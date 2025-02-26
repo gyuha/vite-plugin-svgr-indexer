@@ -1,18 +1,18 @@
 # vite-plugin-svgr-indexer
 
-SVG 아이콘 폴더를 감시하고 자동으로 index.ts 파일을 생성하는 Vite 플러그인입니다.
+A Vite plugin that monitors SVG icon folders and automatically generates index.ts files.
 
-## 설치
+## Installation
 
 ```bash
 npm install vite-plugin-svgr-indexer --save-dev
-# 또는
+# or
 yarn add vite-plugin-svgr-indexer -D
-# 또는
+# or
 pnpm add vite-plugin-svgr-indexer -D
 ```
 
-## 사용법
+## Usage
 
 ```js
 // vite.config.js / vite.config.ts
@@ -22,28 +22,28 @@ import svgrIndexer from 'vite-plugin-svgr-indexer';
 
 export default defineConfig({
   plugins: [
-    svgr(), // vite-plugin-svgr 먼저 설정
+    svgr(), // Configure vite-plugin-svgr first
     svgrIndexer({
-      // 감시할 SVG 아이콘 폴더 경로 (필수)
+      // SVG icon directory paths to monitor (required)
       iconDirs: ['src/assets/icons'],
-      // 생성할 인덱스 파일 이름 (기본값: 'index.ts')
+      // Name of the index file to generate (default: 'index.ts')
       indexFileName: 'index.ts',
-      // 감시 활성화 여부 (기본값: true)
+      // Enable file watching (default: true)
       watch: true,
     }),
   ],
 });
 ```
 
-## 기능
+## Features
 
-- 지정된 폴더 내의 SVG 파일을 감시합니다.
-- SVG 파일이 추가, 삭제, 변경될 때 자동으로 index.ts 파일을 생성합니다.
-- 생성된 index.ts 파일은 모든 SVG 파일을 React 컴포넌트로 import하고 export합니다.
+- Monitors SVG files in specified directories.
+- Automatically generates index.ts files when SVG files are added, deleted, or modified.
+- The generated index.ts file imports all SVG files as React components and exports them.
 
-## 예시
+## Example
 
-SVG 파일 구조:
+SVG file structure:
 ```
 src/assets/icons/
   ├── arrow.svg
@@ -51,7 +51,7 @@ src/assets/icons/
   └── menu.svg
 ```
 
-생성된 index.ts:
+Generated index.ts:
 ```typescript
 import Arrow from './arrow.svg?react';
 import Close from './close.svg?react';
@@ -64,6 +64,6 @@ export {
 };
 ```
 
-## 라이센스
+## License
 
 MIT 
