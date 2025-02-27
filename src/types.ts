@@ -24,6 +24,12 @@ export interface SvgrIndexerOptions {
    * @default true
    */
   recursive?: boolean;
+
+  /**
+   * Prefix to add to component names
+   * @default ''
+   */
+  componentPrefix?: string;
 }
 
 export interface SvgrIndexerPlugin extends Plugin {

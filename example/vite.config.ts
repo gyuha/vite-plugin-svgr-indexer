@@ -17,6 +17,7 @@ export default defineConfig({
       indexFileName: 'index.ts',
       watch: true,
       recursive: true,
+      componentPrefix: 'Icon',
     }) as any,
   ],
 }); 

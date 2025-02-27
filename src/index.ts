@@ -9,15 +9,17 @@ import { SvgrIndexerOptions, SvgrIndexerPlugin } from "./types";
  * Creates a component name from an SVG filename.
  * Example: 'arrow-down.svg' -> 'ArrowDown'
  */
-function getComponentName(fileName: string): string {
+function getComponentName(fileName: string, prefix: string = ""): string {
   // Remove file extension
   const baseName = path.basename(fileName, ".svg");
 
   // Split the filename into words and capitalize the first letter of each word
-  return baseName
+  const componentName = baseName
     .split(/[-_\s]+/)
     .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
+    
+  return prefix + componentName;
 }
 
 /**
@@ -46,7 +48,8 @@ async function getSubdirectories(dir: string): Promise<string[]> {
 async function generateIndexFileForDir(
   dir: string,
   indexFileName: string,
-  recursive: boolean = false
+  recursive: boolean = false,
+  componentPrefix: string = ""
 ): Promise<void> {
   // Get SVG files in the current directory only (not recursive)
   const svgFiles = await getSvgFiles(dir, false);
@@ -60,7 +63,7 @@ async function generateIndexFileForDir(
 
   // Generate import statements
   const imports = relativePaths.map((file) => {
-    const componentName = getComponentName(path.basename(file));
+    const componentName = getComponentName(path.basename(file), componentPrefix);
     // Remove extension from path and add ?react query
     const importPath = "./" + file.replace(/\.svg$/, ".svg?react");
     return `import ${componentName} from '${importPath}';`;
@@ -68,7 +71,7 @@ async function generateIndexFileForDir(
 
   // Generate export statement
   const componentNames = relativePaths.map((file) =>
-    getComponentName(path.basename(file))
+    getComponentName(path.basename(file), componentPrefix)
   );
 
   let fileContent = "";
@@ -90,7 +93,7 @@ async function generateIndexFileForDir(
   if (recursive) {
     const subdirs = await getSubdirectories(dir);
     for (const subdir of subdirs) {
-      await generateIndexFileForDir(subdir, indexFileName, true);
+      await generateIndexFileForDir(subdir, indexFileName, true, componentPrefix);
     }
   }
 }
@@ -105,7 +108,8 @@ export default function svgrIndexer(
     iconDirs = [], 
     indexFileName = "index.ts", 
     watch = true,
-    recursive = true 
+    recursive = true,
+    componentPrefix = ""
   } = options;
 
   if (!iconDirs || iconDirs.length === 0) {
@@ -123,7 +127,7 @@ export default function svgrIndexer(
           console.log(`[vite-plugin-svgr-indexer] Created directory: ${dir}`);
         }
 
-        await generateIndexFileForDir(dir, indexFileName, recursive);
+        await generateIndexFileForDir(dir, indexFileName, recursive, componentPrefix);
       }
 
       // Set up file change monitoring
@@ -138,7 +142,7 @@ export default function svgrIndexer(
             // Get the directory of the changed file
             const fileDir = path.dirname(changedFile);
             // Generate index file for that specific directory
-            await generateIndexFileForDir(fileDir, indexFileName, false);
+            await generateIndexFileForDir(fileDir, indexFileName, false, componentPrefix);
           };
 
           watcher.on("add", handleChange);

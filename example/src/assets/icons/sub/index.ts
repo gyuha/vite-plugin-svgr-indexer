@@ -1,5 +1,5 @@
-import ArrowDown from './arrow-down.svg?react';
+import IconArrowDown from './arrow-down.svg?react';
 
 export {
-  ArrowDown
+  IconArrowDown
 };

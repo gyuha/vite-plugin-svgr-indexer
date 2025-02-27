@@ -30,6 +30,10 @@ export default defineConfig({
       indexFileName: 'index.ts',
       // Enable file watching (default: true)
       watch: true,
+      // Enable sub folder watching (default: true)
+      recursive: true
+      // Prefix to add to component names (defalut: '')
+      componentPrefix: 'Icon'
     }),
   ],
 });

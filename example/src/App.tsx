@@ -1,5 +1,5 @@
-import { ArrowDown } from './assets/icons/sub';
-import { Close, Menu } from './assets/icons';
+import { IconClose, IconMenu } from "./assets/icons";
+import { IconArrowDown } from "./assets/icons/sub";
 
 function App() {
   return (
@@ -7,15 +7,15 @@ function App() {
       <h1>SVG Icon Examples</h1>
       <div className="icons">
         <div className="icon-item">
-          <ArrowDown />
+          <IconArrowDown />
           <span>ArrowDown</span>
         </div>
         <div className="icon-item">
-          <Close />
+          <IconClose />
           <span>Close</span>
         </div>
         <div className="icon-item">
-          <Menu />
+          <IconMenu />
           <span>Menu</span>
         </div>
       </div>
