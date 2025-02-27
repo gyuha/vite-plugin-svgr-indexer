@@ -16,6 +16,7 @@ export default defineConfig({
       iconDirs: ['src/assets/icons'],
       indexFileName: 'index.ts',
       watch: true,
-    }),
+      recursive: true,
+    }) as any,
   ],
 }); 

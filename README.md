@@ -5,11 +5,11 @@ A Vite plugin that monitors SVG icon folders and automatically generates index.t
 ## Installation
 
 ```bash
-npm install vite-plugin-svgr-indexer --save-dev
+npm install vite-plugin-svgr vite-plugin-svgr-indexer --save-dev
 # or
-yarn add vite-plugin-svgr-indexer -D
+yarn add vite-plugin-svgr vite-plugin-svgr-indexer -D
 # or
-pnpm add vite-plugin-svgr-indexer -D
+pnpm add vite-plugin-svgr vite-plugin-svgr-indexer -D
 ```
 
 ## Usage
@@ -42,10 +42,14 @@ If you're using TypeScript, add the following to your `tsconfig.json`:
 ```json
 {
   "compilerOptions": {
-    "types": ["vite-plugin-svgr-indexer/client"]
+    "types": ["vite-plugin-svgr/client"]
   }
 }
 ```
+
+or there is also a declaration helper for better type inference. Add the following to vite-env.d.ts:
+
+/// <reference types="vite-plugin-svgr/client" />
 
 This will provide proper type definitions for SVG imports.
 

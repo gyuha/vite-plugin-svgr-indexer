@@ -18,6 +18,12 @@ export interface SvgrIndexerOptions {
    * @default true
    */
   watch?: boolean;
+
+  /**
+   * Generate index files recursively for all subdirectories
+   * @default true
+   */
+  recursive?: boolean;
 }
 
 export interface SvgrIndexerPlugin extends Plugin {

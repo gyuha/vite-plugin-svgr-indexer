@@ -23,26 +23,40 @@ function getComponentName(fileName: string): string {
 /**
  * Gets a list of SVG files from the specified directory.
  */
-async function getSvgFiles(dir: string): Promise<string[]> {
-  const pattern = path.join(dir, "**/*.svg");
+async function getSvgFiles(dir: string, recursive: boolean = false): Promise<string[]> {
+  const pattern = recursive 
+    ? path.join(dir, "**/*.svg") 
+    : path.join(dir, "*.svg");
   return fg(pattern, { onlyFiles: true });
 }
 
 /**
- * Generates the index.ts file.
+ * Gets all subdirectories from the specified directory.
  */
-async function generateIndexFile(
-  iconDir: string,
-  indexFileName: string
-): Promise<void> {
-  const svgFiles = await getSvgFiles(iconDir);
+async function getSubdirectories(dir: string): Promise<string[]> {
+  const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+  return entries
+    .filter(entry => entry.isDirectory())
+    .map(entry => path.join(dir, entry.name));
+}
 
-  if (svgFiles.length === 0) {
+/**
+ * Generates the index.ts file for a specific directory.
+ */
+async function generateIndexFileForDir(
+  dir: string,
+  indexFileName: string,
+  recursive: boolean = false
+): Promise<void> {
+  // Get SVG files in the current directory only (not recursive)
+  const svgFiles = await getSvgFiles(dir, false);
+
+  if (svgFiles.length === 0 && !recursive) {
     return;
   }
 
   // Convert to relative paths
-  const relativePaths = svgFiles.map((file) => path.relative(iconDir, file));
+  const relativePaths = svgFiles.map((file) => path.relative(dir, file));
 
   // Generate import statements
   const imports = relativePaths.map((file) => {
@@ -57,16 +71,28 @@ async function generateIndexFile(
     getComponentName(path.basename(file))
   );
 
-  const exportStatement = `export {\n  ${componentNames.join(",\n  ")}\n};`;
-
-  // Final file content
-  const fileContent = `${imports.join("\n")}\n\n${exportStatement}\n`;
+  let fileContent = "";
+  
+  if (imports.length > 0) {
+    const exportStatement = `export {\n  ${componentNames.join(",\n  ")}\n};`;
+    fileContent = `${imports.join("\n")}\n\n${exportStatement}\n`;
+  } else {
+    fileContent = "// No SVG files in this directory\n";
+  }
 
   // Save the file
-  const indexFilePath = path.join(iconDir, indexFileName);
+  const indexFilePath = path.join(dir, indexFileName);
   fs.writeFileSync(indexFilePath, fileContent, "utf-8");
 
   console.log(`[vite-plugin-svgr-indexer] Generated ${indexFilePath}`);
+  
+  // If recursive, process subdirectories
+  if (recursive) {
+    const subdirs = await getSubdirectories(dir);
+    for (const subdir of subdirs) {
+      await generateIndexFileForDir(subdir, indexFileName, true);
+    }
+  }
 }
 
 /**
@@ -75,7 +101,12 @@ async function generateIndexFile(
 export default function svgrIndexer(
   options: SvgrIndexerOptions
 ): SvgrIndexerPlugin {
-  const { iconDirs = [], indexFileName = "index.ts", watch = true } = options;
+  const { 
+    iconDirs = [], 
+    indexFileName = "index.ts", 
+    watch = true,
+    recursive = true 
+  } = options;
 
   if (!iconDirs || iconDirs.length === 0) {
     throw new Error("[vite-plugin-svgr-indexer] iconDirs option is required");
@@ -92,7 +123,7 @@ export default function svgrIndexer(
           console.log(`[vite-plugin-svgr-indexer] Created directory: ${dir}`);
         }
 
-        await generateIndexFile(dir, indexFileName);
+        await generateIndexFileForDir(dir, indexFileName, recursive);
       }
 
       // Set up file change monitoring
@@ -103,8 +134,11 @@ export default function svgrIndexer(
             persistent: true,
           });
 
-          const handleChange = async () => {
-            await generateIndexFile(dir, indexFileName);
+          const handleChange = async (changedFile: string) => {
+            // Get the directory of the changed file
+            const fileDir = path.dirname(changedFile);
+            // Generate index file for that specific directory
+            await generateIndexFileForDir(fileDir, indexFileName, false);
           };
 
           watcher.on("add", handleChange);
