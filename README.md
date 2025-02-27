@@ -53,7 +53,9 @@ If you're using TypeScript, add the following to your `tsconfig.json`:
 
 or there is also a declaration helper for better type inference. Add the following to vite-env.d.ts:
 
+```
 /// <reference types="vite-plugin-svgr/client" />
+```
 
 This will provide proper type definitions for SVG imports.
 
