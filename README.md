@@ -35,6 +35,20 @@ export default defineConfig({
 });
 ```
 
+## TypeScript Support
+
+If you're using TypeScript, add the following to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["vite-plugin-svgr-indexer/client"]
+  }
+}
+```
+
+This will provide proper type definitions for SVG imports.
+
 ## Features
 
 - Monitors SVG files in specified directories.
