@@ -31,8 +31,8 @@ export default defineConfig({
       // Enable file watching (default: true)
       watch: true,
       // Enable sub folder watching (default: true)
-      recursive: true
-      // Prefix to add to component names (defalut: '')
+      recursive: true,
+      // Prefix to add to component names (default: '')
       componentPrefix: 'Icon'
     }),
   ],
@@ -62,6 +62,8 @@ This will provide proper type definitions for SVG imports.
 - Monitors SVG files in specified directories.
 - Automatically generates index.ts files when SVG files are added, deleted, or modified.
 - The generated index.ts file imports all SVG files as React components and exports them.
+- Creates separate index.ts files for each subdirectory, importing only the SVG files in that directory.
+- Supports adding a prefix to component names (e.g., `Icon` prefix: `arrow.svg` → `IconArrow`).
 
 ## Example
 
@@ -70,20 +72,54 @@ SVG file structure:
 src/assets/icons/
   ├── arrow.svg
   ├── close.svg
-  └── menu.svg
+  ├── menu.svg
+  └── navigation/
+      ├── back.svg
+      └── forward.svg
 ```
 
-Generated index.ts:
+Generated index.ts in main directory:
 ```typescript
-import Arrow from './arrow.svg?react';
-import Close from './close.svg?react';
-import Menu from './menu.svg?react';
+import IconArrow from './arrow.svg?react';
+import IconClose from './close.svg?react';
+import IconMenu from './menu.svg?react';
 
 export {
-  Arrow,
-  Close,
-  Menu
+  IconArrow,
+  IconClose,
+  IconMenu
 };
+```
+
+Generated index.ts in navigation subdirectory:
+```typescript
+import IconBack from './back.svg?react';
+import IconForward from './forward.svg?react';
+
+export {
+  IconBack,
+  IconForward
+};
+```
+
+## Usage in React Components
+
+```tsx
+// Import from main directory
+import { IconClose, IconMenu } from './assets/icons';
+
+// Import from subdirectory
+import { IconBack } from './assets/icons/navigation';
+
+function App() {
+  return (
+    <div>
+      <IconClose />
+      <IconMenu />
+      <IconBack />
+    </div>
+  );
+}
 ```
 
 ## License
