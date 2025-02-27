@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-svgr-indexer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Vite plugin to automatically generate index.ts for SVG icons",
   "type": "module",
   "main": "dist/index.js",
