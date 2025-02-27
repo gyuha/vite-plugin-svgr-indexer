@@ -3,7 +3,7 @@ import path from "path";
 import { Plugin } from "vite";
 import chokidar from "chokidar";
 import fg from "fast-glob";
-import { SvgrIndexerOptions, SvgrIndexerPlugin } from "./types";
+import { SvgrIndexerOptions, SvgrIndexerPlugin } from "./types.js";
 
 /**
  * Creates a component name from an SVG filename.
@@ -161,4 +161,4 @@ export default function svgrIndexer(
 }
 
 // Export types
-export * from "./types";
+export * from "./types.js";
